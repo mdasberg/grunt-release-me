@@ -22,7 +22,7 @@ function Git(grunt) {
         var bowerJsonPath = path.resolve(cwd + '/bower.json');
 
         return grunt.file.exists(bowerJsonPath)
-            ? grunt.file.readJSON(bowerJsonPath).version
+            ? grunt.file.readJSON(bowerJsonPath).version.match(/([\d|\.]+)/)[1]
             : undefined;
     }
 
@@ -135,7 +135,8 @@ function Git(grunt) {
             newVersion: function (workingDirectory) {
                 return getNewVersion(workingDirectory);
             }
-        }
+        },
+        hello: function() {return 'bla'}
 
     };
 }
