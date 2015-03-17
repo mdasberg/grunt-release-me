@@ -74,13 +74,13 @@ module.exports = function (grunt) {
                         delete bowerJSON.devDependencies;
                         delete bowerJSON.ignore;
                         // update version and name
-                        bowerJSON.name = "bower-" + bowerJSON.name;
+                        bowerJSON.name = bowerJSON.name;
                         bowerJSON.main = configuration.main;
                         bowerJSON.version = git.utils.newVersion(configuration.cwd);
                         // write bower.json
                         grunt.file.write(configuration.wd + '/bower.json', JSON.stringify(bowerJSON, undefined, 2));
-                        callback(null, 200);
                     }
+                    callback(null, 200);
                 }
             },
             function (err, results) {
