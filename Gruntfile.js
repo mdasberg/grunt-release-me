@@ -31,7 +31,7 @@ module.exports = function (grunt) {
         // Configuration to be run (and then tested).
         releasePrepare: {
             default_options: {
-                repository: 'git@bitbucket.org:mdasberg/bower_test.git',
+                repository: '',
                 cwd: '.',
                 wd: '.repo/my_repo',
                 main: './test.js',
@@ -42,6 +42,12 @@ module.exports = function (grunt) {
                         src: ['*.js']
                     }
                 ]
+            }
+        },
+        releasePerform: {
+            default_options: {
+                cwd: '.',
+                wd: '.repo/my_repo'
             }
         },
 
