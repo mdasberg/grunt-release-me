@@ -52,15 +52,15 @@ module.exports = function (grunt) {
                     var copyConfig = {release: undefined};
                     if (configuration.files instanceof Array) {
                         copyConfig.release = {files: []};
-                        for (var i in configuration.files) {
-                            var f = configuration.files[i];
+                        configuration.files.forEach(function(f) {
                             f.dest = configuration.wd; // set the destination.
                             copyConfig.release.files.push(f);
-                        }
+                        });
                     } else {
                         copyConfig.release = configuration.files;
                         copyConfig.release.dest = configuration.wd;
                     }
+
                     grunt.config.set('copy', copyConfig);
                     grunt.task.run('copy');
                     callback(null, 200);
