@@ -1,6 +1,6 @@
 # grunt-release-me
 
-> Release me
+> Grunt plugin for releasing a project to a seperate git repository which can be registered with bower.io.
 
 ## Getting Started
 This plugin requires Grunt `~0.4.5`
@@ -24,61 +24,67 @@ In your project's Gruntfile, add a section named `release_me` to the data object
 
 ```js
 grunt.initConfig({
-  release_me: {
-    options: {
-      // Task-specific options go here.
-    },
+  releaseMe: {
     your_target: {
       // Target-specific file lists and/or options go here.
-    },
-  },
+    }
+  }
 });
 ```
-
 ### Options
 
-#### options.separator
+#### repository
 Type: `String`
-Default value: `',  '`
+Mandatory: true
 
-A string value that is used to do something with whatever.
+Should be the url to the git repository which has been registered with bower.io.
 
-#### options.punctuation
+#### buildNumber
 Type: `String`
-Default value: `'.'`
 
-A string value that is used to do something else with whatever else.
+Should be build number. This number will be used in the new version for identification purposes.
+
+#### main
+Type: `String`
+
+Should be the main js file.
+
+#### cwd
+Type: `String`
+Mandatory: true
+
+Should be the directory of the source repository in which the bower.json file is located.
+
+#### wd
+Type: `String`
+Mandatory: true
+
+Should be the directory to which the bower repository will be cloned to.
+
+#### files
+Type: `Object` or `Array`
+
+Should be the files that need to be pushed to the bower repository.
 
 ### Usage Examples
 
 #### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
 
 ```js
 grunt.initConfig({
-  release_me: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-});
-```
-
-#### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
-
-```js
-grunt.initConfig({
-  release_me: {
-    options: {
-      separator: ': ',
-      punctuation: ' !!!',
-    },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
+  releaseMe: {
+     your_target: {
+        repository: 'repo.git',
+        buildNumber: '1',
+        main: './some_repo_code.js',
+        cwd: './source_repo',
+        wd: '.tmp/some_repo',
+        files: [{
+           cwd: './source_repo/packaged',
+           src: '*.js'
+        }]
+     }
+  }
 });
 ```
 
