@@ -9,9 +9,9 @@ function Git(grunt) {
     function getSha(cwd) {
         var dotBowerJsonPath = path.resolve(cwd + '/.bower.json');
 
-        return grunt.file.exists(dotBowerJsonPath)
-            ? grunt.file.readJSON(dotBowerJsonPath)._resolution.commit.substring(0, 7)
-            : undefined;
+        return grunt.file.exists(dotBowerJsonPath) ?
+            grunt.file.readJSON(dotBowerJsonPath)._resolution.commit.substring(0, 7):
+            undefined;
     }
 
     /**
@@ -21,9 +21,9 @@ function Git(grunt) {
     function getVersion(cwd) {
         var bowerJsonPath = path.resolve(cwd + '/bower.json');
 
-        return grunt.file.exists(bowerJsonPath)
-            ? grunt.file.readJSON(bowerJsonPath).version.match(/([\d|\.]+)/)[1]
-            : undefined;
+        return grunt.file.exists(bowerJsonPath)?
+            grunt.file.readJSON(bowerJsonPath).version.match(/([\d|\.]+)/)[1]:
+            undefined;
     }
 
     /**
@@ -33,7 +33,7 @@ function Git(grunt) {
     function getNewVersion(cwd, buildNumber) {
         var version = getVersion(cwd),
             sha = getSha(cwd),
-            newVersion = undefined;
+            newVersion;
 
         if (version && sha) {
             newVersion = version + '-build.' + buildNumber + '+sha.' + sha;
@@ -57,7 +57,7 @@ function Git(grunt) {
                         grunt.fail.fatal('Could not clone repository due to previous shown error.');
                     }
                     done();
-                })
+                });
             },
             addAll: function (workingDirectory, done) {
                 var options = {

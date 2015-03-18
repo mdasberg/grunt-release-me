@@ -1,0 +1,23 @@
+{
+  "name": "some_repo",
+  "dependencies": {
+    "dependency-a": "1.0.0",
+    "dependency-b": "1.1.0"
+  },
+  "devDependencies": {
+    "dependency-x": "0.1.0",
+    "dependency-y": "0.2.0"
+  },
+  "ignore": [
+    "*",
+    "!src/js/*"
+  ],
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "62832986ab66793e88289c67f27ac65ef9076fe9"
+  },
+  "_source": "ssh://git@repo/team/some_repo.git",
+  "_target": "master",
+  "_originalSource": "ssh://git@repo/team/some_repo.git"
+}

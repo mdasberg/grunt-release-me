@@ -15,8 +15,7 @@ module.exports = function (grunt) {
         jshint: {
             all: [
                 'Gruntfile.js',
-                'tasks/*.js',
-                '<%= nodeunit.tests %>'
+                'tasks/*.js'
             ],
             options: {
                 jshintrc: '.jshintrc'
@@ -25,29 +24,13 @@ module.exports = function (grunt) {
 
         // Before generating any new files, remove any previously-created files.
         clean: {
-            tests: ['tmp', '.repo']
+            tests: ['.tmp', '.release']
         },
 
-        // Configuration to be run (and then tested).
-        releaseMe: {
-            default_options: {
-                repository: 'git@bitbucket.org:mdasberg/bower_test.git',
-                cwd: '.',
-                buildNumber: '126',
-                wd: '.repo/my_repo',
-                main: './test.js',
-                files: [
-                    {
-                        cwd: './packaged_code',
-                        src: '**/*.js'
-                    }
-                ]
+        shell: {
+            target: {
+                command: 'node_modules/jasmine-node/bin/jasmine-node test/*Spec.js'
             }
-        },
-
-        // Unit tests.
-        nodeunit: {
-            tests: ['test/*_test.js']
         }
     });
 
@@ -57,11 +40,11 @@ module.exports = function (grunt) {
     // These plugins provide necessary tasks.
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-nodeunit');
+    grunt.loadNpmTasks('grunt-shell');
 
     // Whenever the "test" task is run, first clean the "tmp" dir, then run this
     // plugin's task(s), then test the result.
-    grunt.registerTask('test', ['clean', 'releasePrepare:default_options', 'nodeunit']);
+    grunt.registerTask('test', ['clean', 'shell']);
 
     // By default, lint and run all tests.
     grunt.registerTask('default', ['jshint', 'test']);

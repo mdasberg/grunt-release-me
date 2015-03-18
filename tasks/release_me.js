@@ -23,7 +23,7 @@ module.exports = function (grunt) {
      * 8. push tag to remote
      */
     grunt.registerMultiTask('releaseMe', 'Release me', function () {
-        require('./release')(grunt).releaseMe(this.data, this.async());
+        require('./release')(grunt).me(this.data, this.async());
     });
 
 };

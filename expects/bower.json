@@ -1,0 +1,9 @@
+{
+  "name": "some_repo",
+  "version": "0.1.1-build.1+sha.6283298",
+  "dependencies": {
+    "dependency-a": "1.0.0",
+    "dependency-b": "1.1.0"
+  },
+  "main": "./some_repo_code.js"
+}

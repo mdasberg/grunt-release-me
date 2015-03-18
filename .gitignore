@@ -1,5 +1,12 @@
+# IDE
 .idea/
+*.iml
 
-node_modules
+# Generated stuff
+_SpecRunner.html
 npm-debug.log
-tmp
+.tmp
+.release
+
+# node
+node_modules
