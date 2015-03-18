@@ -29,25 +29,19 @@ module.exports = function (grunt) {
         },
 
         // Configuration to be run (and then tested).
-        releasePrepare: {
+        releaseMe: {
             default_options: {
-                repository: '',
+                repository: 'git@bitbucket.org:mdasberg/bower_test.git',
                 cwd: '.',
+                buildNumber: '126',
                 wd: '.repo/my_repo',
                 main: './test.js',
                 files: [
                     {
-                        expand: true,
-                        cwd: 'packaged_code',
-                        src: ['*.js']
+                        cwd: './packaged_code',
+                        src: '**/*.js'
                     }
                 ]
-            }
-        },
-        releasePerform: {
-            default_options: {
-                cwd: '.',
-                wd: '.repo/my_repo'
             }
         },
 
@@ -55,7 +49,6 @@ module.exports = function (grunt) {
         nodeunit: {
             tests: ['test/*_test.js']
         }
-
     });
 
     // Actually load this plugin's task(s).
@@ -64,7 +57,6 @@ module.exports = function (grunt) {
     // These plugins provide necessary tasks.
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
     // Whenever the "test" task is run, first clean the "tmp" dir, then run this

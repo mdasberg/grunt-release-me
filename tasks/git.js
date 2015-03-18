@@ -30,17 +30,13 @@ function Git(grunt) {
      * Gets the new version.
      * @returns newVersion The new version.
      */
-    function getNewVersion(cwd) {
+    function getNewVersion(cwd, buildNumber) {
         var version = getVersion(cwd),
             sha = getSha(cwd),
             newVersion = undefined;
 
         if (version && sha) {
-            var semVer = version.split('.');
-            var major = semVer[0];
-            var minor = semVer[1];
-            var build = semVer[2];
-            newVersion = major + '.' + minor + '.' + ++build + '+sha.' + sha;
+            newVersion = version + '-build.' + buildNumber + '+sha.' + sha;
         }
         return newVersion;
     }
@@ -132,12 +128,10 @@ function Git(grunt) {
             sha: function (workingDirectory) {
                 return getSha(workingDirectory);
             },
-            newVersion: function (workingDirectory) {
-                return getNewVersion(workingDirectory);
+            newVersion: function (workingDirectory, buildNumber) {
+                return getNewVersion(workingDirectory, buildNumber);
             }
-        },
-        hello: function() {return 'bla'}
-
+        }
     };
 }
 
