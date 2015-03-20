@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = function (grunt) {
 
     var git = require('./git')(grunt),

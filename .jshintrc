@@ -9,5 +9,12 @@
   "undef": true,
   "boss": true,
   "eqnull": true,
-  "node": true
+  "node": false,
+  "globalstrict": true,
+  "globals": {
+    "module": false,
+    "require": false,
+    "exports": false
+  }
+
 }

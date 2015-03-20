@@ -1,3 +1,5 @@
+'use strict';
+
 function Git(grunt) {
 
     var path = require('path');

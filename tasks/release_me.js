@@ -2,7 +2,7 @@
  * grunt-release-me
  * https://github.com/mdasberg/grunt-release-me
  *
- * Copyright (c) 2015 Mischa Dasberg
+ * Copyright (c) 2015 Mischa Dasberg and contributors
  * Licensed under the MIT license.
  */
 
