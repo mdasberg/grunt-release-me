@@ -7,6 +7,9 @@
     "name": "Mischa Dasberg",
     "email": "mischa@dasberg.nl"
   },
+  "contributors": [
+    "Chris Quach <chris@quach.nl>"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/mdasberg/grunt-release-me.git"
