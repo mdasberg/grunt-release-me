@@ -19,10 +19,6 @@ module.exports = function (grunt) {
                 grunt.fail.fatal('No repository has been specified.');
             }
 
-            if (typeof configuration.buildNumber === 'undefined') {
-                grunt.fail.fatal('No buildNumber has been specified.');
-            }
-
             if(typeof configuration.cwd === 'undefined') {
                 grunt.fail.fatal('No current working directory has been specified.');
             }

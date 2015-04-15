@@ -1,0 +1,12 @@
+{
+  "name": "some_repo",
+  "version": "0.1.1",
+  "dependencies": {
+    "dependency-a": "1.0.0",
+    "dependency-b": "1.1.0"
+  },
+  "main": [
+    "./some_repo_code.js",
+    "./some_repo_code.min.js"
+  ]
+}

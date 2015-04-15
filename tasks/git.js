@@ -37,8 +37,11 @@ function Git(grunt) {
             sha = getSha(cwd),
             newVersion;
 
-        if (version && sha) {
-            newVersion = version + '-build.' + buildNumber + '+sha.' + sha;
+        if(version) {
+            newVersion = version;
+            if(buildNumber && sha) {
+                newVersion = newVersion.concat('-build.' + buildNumber + '+sha.' + sha);
+            }
         }
         return newVersion;
     }
