@@ -19,7 +19,7 @@ module.exports = function (grunt) {
                 grunt.fail.fatal('No repository has been specified.');
             }
 
-            if(typeof configuration.cwd === 'undefined') {
+            if (typeof configuration.cwd === 'undefined') {
                 grunt.fail.fatal('No current working directory has been specified.');
             }
 
@@ -32,10 +32,15 @@ module.exports = function (grunt) {
             async.series({
                     // #1
                     clone: function (callback) {
-                        grunt.verbose.writeln('Cloning repository ['+ configuration.repository + '] to working directory [' + configuration.wd + ']');
+                        grunt.verbose.writeln('Cloning repository [' + configuration.repository + '] to working directory [' + configuration.wd + ']');
                         git.commands.clone(configuration.repository, configuration.wd, callback);
                     },
                     // #2
+                    changes: function (callback) {
+                        var changes = git.utils.previousSha(configuration.wd) !== git.utils.sha(configuration.cwd);
+                        callback(changes || configuration.buildNumber == undefined ? null : 'no changes detected', 200);
+                    },
+                    // #3
                     copy: function (callback) {
                         grunt.verbose.writeln('Copying files to working directory [' + configuration.wd + ']');
                         var globs = [];
@@ -43,7 +48,7 @@ module.exports = function (grunt) {
                             configuration.files.forEach(function (f) {
                                 globs.push({cwd: f.cwd, src: f.src});
                             });
-                        } else if(configuration.files !== undefined) {
+                        } else if (configuration.files !== undefined) {
                             globs.push({cwd: configuration.files.cwd, src: configuration.files.src});
                         }
 
@@ -63,7 +68,7 @@ module.exports = function (grunt) {
                         });
                         callback(null, 200);
                     },
-                    // #3
+                    // #4
                     updateBowerJsonWithNewVersion: function (callback) {
                         grunt.verbose.writeln('Updating bower.json with new version [' + newVersion + ']');
                         var bowerJsonPath = path.resolve(configuration.cwd + '/bower.json');
@@ -81,34 +86,36 @@ module.exports = function (grunt) {
                         }
                         callback(null, 200);
                     },
-                    // #4
+                    // #5
                     addAll: function (callback) {
                         grunt.verbose.writeln('Adding all files');
                         git.commands.addAll(configuration.wd, callback);
                     },
-                    // #5
+                    // #6
                     commit: function (callback) {
                         grunt.verbose.writeln('Committing all added changes');
                         git.commands.commit(configuration.wd, 'v' + newVersion, callback);
                     },
-                    // #6
+                    // #7
                     tag: function (callback) {
                         grunt.verbose.writeln('Creating tag [v' + newVersion + ']');
                         git.commands.tag(configuration.wd, 'v' + newVersion, callback);
                     },
-                    // #7
+                    // #8
                     pushMaster: function (callback) {
                         grunt.verbose.writeln('Pushing changes to branch [master]');
                         git.commands.push(configuration.wd, 'master', callback);
                     },
-                    // #8
+                    // #9
                     pushTag: function (callback) {
                         grunt.verbose.writeln('Pushing changes to branch [v' + newVersion + ']');
                         git.commands.push(configuration.wd, 'v' + newVersion, callback);
                     }
                 },
                 function (err, results) {
-                    if(err !== undefined) {
+                    if (err === 'no changes detected') {
+                        grunt.verbose.warn('Nothing to release');
+                    } else if (err !== undefined) {
                         grunt.fail.fatal(err);
                     }
                     finish();

@@ -16,8 +16,19 @@ describe('ReleaseMe', function () {
             callback(null);
         });
         spyOn(grunt.verbose, 'writeln');
+        spyOn(grunt.verbose, 'warn');
 
         release = require('./../tasks/release.js')(grunt)
+    });
+
+    afterEach(function () {
+        if (grunt.file.exists('.tmp')) {
+            grunt.file.delete('.tmp', {force: true});
+        }
+
+        if (grunt.file.exists('.release')) {
+            grunt.file.delete('.release', {force: true});
+        }
     });
 
     describe('should release', function () {
@@ -43,7 +54,7 @@ describe('ReleaseMe', function () {
                 expect(grunt.verbose.writeln).toHaveBeenCalledWith('Pushing changes to branch [v' + newVersion + ']');
                 if (hasBuildNumber) {
                     expect(grunt.file.readJSON('./expects/bower.json')).toEqual(grunt.file.readJSON(configuration.wd + '/bower.json'));
-                } else if(hasMainArray) {
+                } else if (hasMainArray) {
                     expect(grunt.file.readJSON('./expects/bower-with-main-array.json')).toEqual(grunt.file.readJSON(configuration.wd + '/bower.json'));
                 } else {
                     expect(grunt.file.readJSON('./expects/bower-without-build-and-sha.json')).toEqual(grunt.file.readJSON(configuration.wd + '/bower.json'));
@@ -138,7 +149,7 @@ describe('ReleaseMe', function () {
         it('when an array of main files has been provided in the configuration', function () {
             releaseMe({
                 repository: 'repo.git',
-                main: ['./some_repo_code.js','./some_repo_code.min.js'],
+                main: ['./some_repo_code.js', './some_repo_code.min.js'],
                 cwd: './source_repo',
                 wd: '.tmp/mainArray',
                 files: {
@@ -201,6 +212,21 @@ describe('ReleaseMe', function () {
             } catch (err) {
                 expect(/No current working directory has been specified/.test(err)).toBeTruthy();
             }
+        });
+
+        it('when nothing has changed', function () {
+            var configuration = {
+                repository: 'repo.git',
+                buildNumber: '1',
+                main: './some_repo_code.js',
+                cwd: './source_repo',
+                wd: 'expects'
+            };
+            release.me(configuration, function () {
+                expect(grunt.verbose.writeln).toHaveBeenCalledWith('Cloning repository [repo.git] to working directory [' + configuration.wd + ']');
+                expect(grunt.verbose.warn).toHaveBeenCalledWith('Nothing to release');
+
+            });
         });
     });
 });
