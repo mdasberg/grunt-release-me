@@ -45,9 +45,9 @@ Type: `String`
 Should be build number. This number will be used in the new version for identification purposes.
 
 #### main
-Type: `String`
+Type: `String` or `Array` of String
 
-Should be the main js file.
+Should be the main js file(s).
 
 #### cwd
 Type: `String`
