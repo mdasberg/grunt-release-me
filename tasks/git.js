@@ -29,6 +29,22 @@ function Git(grunt) {
     }
 
     /**
+     * Gets the previous sha from the bower file from the repository.
+     * @returns sha The sha
+     */
+    function getPreviousSha(wd) {
+        var bowerJsonPath = path.resolve(wd + '/bower.json');
+        if(grunt.file.exists(bowerJsonPath)) {
+            var sha = undefined;
+            try {
+                sha = grunt.file.readJSON(bowerJsonPath).version.match(/.*sha\.(.*)/)[1]
+            } finally {
+                return sha;
+            }
+        }
+    }
+
+    /**
      * Gets the new version.
      * @returns newVersion The new version.
      */
@@ -132,6 +148,9 @@ function Git(grunt) {
             },
             sha: function (workingDirectory) {
                 return getSha(workingDirectory);
+            },
+            previousSha: function (workingDirectory) {
+                return getPreviousSha(workingDirectory);
             },
             newVersion: function (workingDirectory, buildNumber) {
                 return getNewVersion(workingDirectory, buildNumber);
