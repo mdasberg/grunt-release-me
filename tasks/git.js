@@ -35,9 +35,9 @@ function Git(grunt) {
     function getPreviousSha(wd) {
         var bowerJsonPath = path.resolve(wd + '/bower.json');
         if(grunt.file.exists(bowerJsonPath)) {
-            var sha = undefined;
+            var sha;
             try {
-                sha = grunt.file.readJSON(bowerJsonPath).version.match(/.*sha\.(.*)/)[1]
+                sha = grunt.file.readJSON(bowerJsonPath).version.match(/.*sha\.(.*)/)[1];
             } finally {
                 return sha;
             }

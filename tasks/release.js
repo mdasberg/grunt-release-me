@@ -38,7 +38,7 @@ module.exports = function (grunt) {
                     // #2
                     changes: function (callback) {
                         var changes = git.utils.previousSha(configuration.wd) !== git.utils.sha(configuration.cwd);
-                        callback(changes || configuration.buildNumber == undefined ? null : 'no changes detected', 200);
+                        callback(changes || configuration.buildNumber === undefined ? null : 'no changes detected', 200);
                     },
                     // #3
                     copy: function (callback) {
