@@ -49,14 +49,19 @@ function Git(grunt) {
      * @returns newVersion The new version.
      */
     function getNewVersion(cwd, buildNumber) {
-        var version = getVersion(cwd),
+        var buildNo = parseInt(buildNumber),
+            version = getVersion(cwd),
             sha = getSha(cwd),
             newVersion;
 
+        if(isNaN(buildNo)) {
+            buildNo = undefined;
+        }
+
         if(version) {
             newVersion = version;
-            if(buildNumber && sha) {
-                newVersion = newVersion.concat('-build.' + buildNumber + '+sha.' + sha);
+            if(buildNo && sha) {
+                newVersion = newVersion.concat('-build.' + buildNo + '+sha.' + sha);
             }
         }
         return newVersion;
