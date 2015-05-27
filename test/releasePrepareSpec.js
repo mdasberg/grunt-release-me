@@ -35,7 +35,8 @@ describe('ReleaseMe', function () {
 
         function releaseMe(configuration) {
             var hasWd = configuration.wd !== undefined;
-            var hasBuildNumber = configuration.buildNumber !== undefined;
+            var buildNo = parseInt(configuration.buildNumber);
+            var hasBuildNumber = !isNaN(buildNo);
             var hasMainArray = configuration.main instanceof Array;
             var newVersion = '0.1.1' + (hasBuildNumber ? '-build.' + configuration.buildNumber + '+sha.6283298' : '');
             release.me(configuration, function () {
@@ -133,9 +134,23 @@ describe('ReleaseMe', function () {
             });
         });
 
-        it('when a no build number has been provided in the configuration', function () {
+        it('when no build number has been provided in the configuration', function () {
             releaseMe({
                 repository: 'repo.git',
+                main: './some_repo_code.js',
+                cwd: './source_repo',
+                wd: '.tmp/filesObject',
+                files: {
+                    cwd: './source_repo/packaged',
+                    src: '**/*.js'
+                }
+            });
+        });
+
+        it('when an empty string has been provided as build number in the configuration', function() {
+            releaseMe({
+                repository: 'repo.git',
+                buildNumber: '',
                 main: './some_repo_code.js',
                 cwd: './source_repo',
                 wd: '.tmp/filesObject',
