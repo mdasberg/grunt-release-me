@@ -1,0 +1,12 @@
+{
+  "name": "non_bower_repo",
+  "version": "0.1.1",
+  "dependencies": {
+    "dependency-a": "1.0.0",
+    "dependency-b": "1.1.0"
+  },
+  "devDependencies": {
+    "dependency-x": "0.1.0",
+    "dependency-y": "0.2.0"
+  }
+}

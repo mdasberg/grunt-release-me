@@ -1,6 +1,7 @@
-'use script';
+'use strict';
 
-var grunt = require('grunt');
+var grunt = require('grunt'),
+    release;
 
 /**
  * Tests for the Release Me grunt plugin.
@@ -38,7 +39,12 @@ describe('ReleaseMe', function () {
             var buildNo = parseInt(configuration.buildNumber);
             var hasBuildNumber = !isNaN(buildNo);
             var hasMainArray = configuration.main instanceof Array;
-            var newVersion = '0.1.1' + (hasBuildNumber ? '-build.' + configuration.buildNumber + '+sha.6283298' : '');
+            var hasDotBower = grunt.file.exists(configuration.cwd, '.bower.json');
+            var newVersion = '0.1.1';
+            if (hasBuildNumber) {
+                newVersion = newVersion + '-build.' + configuration.buildNumber + '+sha.' + (hasDotBower ? '6283298' : 'f75bc5d');
+            }
+
             release.me(configuration, function () {
                 if (hasWd) {
                     expect(grunt.verbose.writeln).not.toHaveBeenCalledWith(('No working directory has been defined, using default fallback [.release]').bold);
@@ -54,7 +60,11 @@ describe('ReleaseMe', function () {
                 expect(grunt.verbose.writeln).toHaveBeenCalledWith('Pushing changes to branch [master]');
                 expect(grunt.verbose.writeln).toHaveBeenCalledWith('Pushing changes to branch [v' + newVersion + ']');
                 if (hasBuildNumber) {
-                    expect(grunt.file.readJSON('./expects/bower.json')).toEqual(grunt.file.readJSON(configuration.wd + '/bower.json'));
+                    if (hasDotBower) {
+                        expect(grunt.file.readJSON('./expects/bower.json')).toEqual(grunt.file.readJSON(configuration.wd + '/bower.json'));
+                    } else {
+                        expect(grunt.file.readJSON('./expects/bower-without-dot-bower.json')).toEqual(grunt.file.readJSON(configuration.wd + '/bower.json'));
+                    }
                 } else if (hasMainArray) {
                     expect(grunt.file.readJSON('./expects/bower-with-main-array.json')).toEqual(grunt.file.readJSON(configuration.wd + '/bower.json'));
                 } else {
@@ -147,7 +157,7 @@ describe('ReleaseMe', function () {
             });
         });
 
-        it('when an empty string has been provided as build number in the configuration', function() {
+        it('when an empty string has been provided as build number in the configuration', function () {
             releaseMe({
                 repository: 'repo.git',
                 buildNumber: '',
@@ -173,38 +183,23 @@ describe('ReleaseMe', function () {
                 }
             });
         });
+
+        it('when there is no .bower.json in the cwd', function () {
+            releaseMe({
+                repository: 'repo.git',
+                buildNumber: '1',
+                main: './some_repo_code.js',
+                cwd: './non_bower_repo',
+                wd: '.tmp/dotGitSha',
+                files: {
+                    cwd: './source_repo/packaged',
+                    src: '**/*.js'
+                }
+            });
+        });
     });
 
     describe('should not release', function () {
-        function releaseMe(configuration) {
-            var hasWd = configuration.wd !== undefined;
-            var hasBuildNumber = configuration.buildNumber !== undefined;
-            var newVersion = '0.1.1' + (hasBuildNumber ? '-build.' + configuration.buildNumber + '+sha.6283298' : '');
-            release.me(configuration, function () {
-                if (hasWd) {
-                    expect(grunt.verbose.writeln).not.toHaveBeenCalledWith(('No working directory has been defined, using default fallback [.release]').bold);
-                } else {
-                    expect(grunt.verbose.writeln).toHaveBeenCalledWith(('No working directory has been defined, using default fallback [.release]').bold);
-                }
-                expect(grunt.verbose.writeln).toHaveBeenCalledWith('Cloning repository [repo.git] to working directory [' + configuration.wd + ']');
-                expect(grunt.verbose.writeln).toHaveBeenCalledWith('Copying files to working directory [' + configuration.wd + ']');
-                expect(grunt.verbose.writeln).toHaveBeenCalledWith('Updating bower.json with new version [' + newVersion + ']');
-                expect(grunt.verbose.writeln).toHaveBeenCalledWith('Adding all files');
-                expect(grunt.verbose.writeln).toHaveBeenCalledWith('Committing all added changes');
-                expect(grunt.verbose.writeln).toHaveBeenCalledWith('Creating tag [v' + newVersion + ']');
-                expect(grunt.verbose.writeln).toHaveBeenCalledWith('Pushing changes to branch [master]');
-                expect(grunt.verbose.writeln).toHaveBeenCalledWith('Pushing changes to branch [v' + newVersion + ']');
-                if (hasBuildNumber) {
-                    expect(grunt.file.readJSON('./expects/bower.json')).toEqual(grunt.file.readJSON(configuration.wd + '/bower.json'));
-                } else {
-                    expect(grunt.file.readJSON('./expects/bower-without-build-and-sha.json')).toEqual(grunt.file.readJSON(configuration.wd + '/bower.json'));
-                }
-
-                expect(grunt.file.exists(configuration.wd + '/some_repo_code.js')).toBeFalsy();
-                expect(grunt.file.exists(configuration.wd + '/subfolder/some_subfolder_code.js')).toBeFalsy();
-            });
-        }
-
         it('when no repository has been provided in the configuration', function () {
             try {
                 release.me({
@@ -234,13 +229,13 @@ describe('ReleaseMe', function () {
                 repository: 'repo.git',
                 buildNumber: '1',
                 main: './some_repo_code.js',
-                cwd: './source_repo',
-                wd: 'expects'
+                cwd: './non_bower_repo',
+                wd: './non_bower_release'
             };
+
             release.me(configuration, function () {
                 expect(grunt.verbose.writeln).toHaveBeenCalledWith('Cloning repository [repo.git] to working directory [' + configuration.wd + ']');
                 expect(grunt.verbose.warn).toHaveBeenCalledWith('Nothing to release');
-
             });
         });
     });
