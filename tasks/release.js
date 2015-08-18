@@ -78,7 +78,6 @@ module.exports = function (grunt) {
                             delete bowerJSON.devDependencies;
                             delete bowerJSON.ignore;
                             // update version and name
-                            bowerJSON.name = bowerJSON.name;
                             bowerJSON.main = configuration.main;
                             bowerJSON.version = newVersion;
                             // write bower.json

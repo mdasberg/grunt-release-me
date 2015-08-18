@@ -6,14 +6,26 @@ function Git(grunt) {
 
     /**
      * Gets the sha# from the bower file.
-     * @returns sha The sha#.
+     * @returns string The sha#.
      */
     function getSha(cwd) {
-        var dotBowerJsonPath = path.resolve(cwd + '/.bower.json');
+        var dotBowerJsonPath = path.resolve(cwd, '.bower.json'),
+            gitHeadPath = path.resolve(cwd, '.git', 'HEAD');
 
-        return grunt.file.exists(dotBowerJsonPath) ?
-            grunt.file.readJSON(dotBowerJsonPath)._resolution.commit.substring(0, 7):
-            undefined;
+        // first check .bower.json
+        if(grunt.file.exists(dotBowerJsonPath)) {
+            return grunt.file.readJSON(dotBowerJsonPath)._resolution.commit.substring(0, 7);
+        // then check .git/HEAD
+        } else if(grunt.file.exists(gitHeadPath)) {
+            var head = /^ref:\s*(.+)\n*$/.exec(grunt.file.read(gitHeadPath));
+            if(head !== null) {
+                return grunt.file.read(path.resolve(cwd, '.git', head[1])).substring(0, 7);
+            }
+
+            return undefined;
+        }
+        // unable to determine SHA of revision
+        return undefined;
     }
 
     /**
@@ -64,6 +76,7 @@ function Git(grunt) {
                 newVersion = newVersion.concat('-build.' + buildNo + '+sha.' + sha);
             }
         }
+
         return newVersion;
     }
 
