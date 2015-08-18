@@ -1,6 +1,7 @@
 {
   "name": "non_bower_repo",
   "version": "0.1.1-build.1+sha.f75bc5d",
+  "ignore": [],
   "dependencies": {
     "dependency-a": "1.0.0",
     "dependency-b": "1.1.0"
