@@ -8,6 +8,13 @@ var grunt = require('grunt'),
  */
 describe('ReleaseMe', function () {
 
+    function mockGitFiles() {
+        expect(grunt.file.exists('.non_bower_repo/.git/HEAD')).toBeFalsy();
+
+        grunt.file.write('non_bower_repo/.git/HEAD', 'ref: refs/heads/develop');
+        grunt.file.write('non_bower_repo/.git/refs/heads/develop', 'f75bc5d51b6c1ab1434dc21465bbc92e3e0220d9');
+    }
+
     /** Override the some grunt functions so we can do some expects */
     beforeEach(function () {
         spyOn(grunt.fail, 'fatal').andCallFake(function (msg) {
@@ -29,6 +36,10 @@ describe('ReleaseMe', function () {
 
         if (grunt.file.exists('.release')) {
             grunt.file.delete('.release', {force: true});
+        }
+
+        if (grunt.file.exists('non_bower_repo/.git')) {
+            grunt.file.delete('non_bower_repo/.git', {force: true});
         }
     });
 
@@ -185,6 +196,7 @@ describe('ReleaseMe', function () {
         });
 
         it('when there is no .bower.json in the cwd', function () {
+            mockGitFiles();
             releaseMe({
                 repository: 'repo.git',
                 buildNumber: '1',
@@ -225,6 +237,7 @@ describe('ReleaseMe', function () {
         });
 
         it('when nothing has changed', function () {
+            mockGitFiles();
             var configuration = {
                 repository: 'repo.git',
                 buildNumber: '1',
