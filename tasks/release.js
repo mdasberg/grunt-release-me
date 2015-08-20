@@ -76,7 +76,8 @@ module.exports = function (grunt) {
                             bowerJSON = grunt.file.readJSON(bowerJsonPath);
                             // clean the bower.json
                             delete bowerJSON.devDependencies;
-                            bowerJSON.ignore =  [];
+                            delete bowerJSON.resolutions;
+                            bowerJSON.ignore = [];
                             // update version and name
                             bowerJSON.main = configuration.main;
                             bowerJSON.version = newVersion;

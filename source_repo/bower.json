@@ -8,5 +8,8 @@
   "devDependencies": {
     "dependency-x": "0.1.0",
     "dependency-y": "0.2.0"
+  },
+  "resolutions": {
+    "dependency-a": "1.0.0"
   }
 }

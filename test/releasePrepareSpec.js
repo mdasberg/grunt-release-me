@@ -70,16 +70,21 @@ describe('ReleaseMe', function () {
                 expect(grunt.verbose.writeln).toHaveBeenCalledWith('Creating tag [v' + newVersion + ']');
                 expect(grunt.verbose.writeln).toHaveBeenCalledWith('Pushing changes to branch [master]');
                 expect(grunt.verbose.writeln).toHaveBeenCalledWith('Pushing changes to branch [v' + newVersion + ']');
+
+
+                var buildJSON = grunt.file.readJSON(configuration.wd + '/bower.json');
+                expect(buildJSON.resolutions).toBeUndefined();
+
                 if (hasBuildNumber) {
                     if (hasDotBower) {
-                        expect(grunt.file.readJSON('./expects/bower.json')).toEqual(grunt.file.readJSON(configuration.wd + '/bower.json'));
+                        expect(grunt.file.readJSON('./expects/bower.json')).toEqual(buildJSON);
                     } else {
-                        expect(grunt.file.readJSON('./expects/bower-without-dot-bower.json')).toEqual(grunt.file.readJSON(configuration.wd + '/bower.json'));
+                        expect(grunt.file.readJSON('./expects/bower-without-dot-bower.json')).toEqual(buildJSON);
                     }
                 } else if (hasMainArray) {
-                    expect(grunt.file.readJSON('./expects/bower-with-main-array.json')).toEqual(grunt.file.readJSON(configuration.wd + '/bower.json'));
+                    expect(grunt.file.readJSON('./expects/bower-with-main-array.json')).toEqual(buildJSON);
                 } else {
-                    expect(grunt.file.readJSON('./expects/bower-without-build-and-sha.json')).toEqual(grunt.file.readJSON(configuration.wd + '/bower.json'));
+                    expect(grunt.file.readJSON('./expects/bower-without-build-and-sha.json')).toEqual(buildJSON);
                 }
 
                 expect(grunt.file.exists(configuration.wd + '/some_repo_code.js')).toBeTruthy();
