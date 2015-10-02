@@ -38,10 +38,24 @@ module.exports = function (grunt) {
                     // #2
                     changes: function (callback) {
                         var changes = git.utils.previousSha(configuration.wd) !== git.utils.sha(configuration.cwd);
-                        callback(changes || configuration.buildNumber === undefined ? null : 'no changes detected', 200);
+                        callback(changes || isNaN(parseInt(configuration.buildNumber)) ? null : 'no changes detected', 200);
                     },
                     // #3
                     copy: function (callback) {
+                        grunt.verbose.writeln('Cleaning content of [' + configuration.wd + ']');
+                        try {
+                            // have to remove all files to make sure we don't leave any files that are removed from the source repository.
+                            // because we use `git add -A` the index will be correctly updated.
+                            fs.readdirSync(configuration.wd).forEach(function (file) {
+                                if(file !== '.git') {
+                                    fs.removeSync(path.join(configuration.wd, file));
+                                }
+                            });
+                        } catch (err) {
+                            callback(err, 200);
+                            return;
+                        }
+
                         grunt.verbose.writeln('Copying files to working directory [' + configuration.wd + ']');
                         var globs = [];
                         if (configuration.files instanceof Array) {

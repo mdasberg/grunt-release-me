@@ -1,6 +1,7 @@
 'use strict';
 
 var grunt = require('grunt'),
+    fs = require('fs-extra'),
     release;
 
 /**
@@ -63,6 +64,7 @@ describe('ReleaseMe', function () {
                     expect(grunt.verbose.writeln).toHaveBeenCalledWith(('No working directory has been defined, using default fallback [.release]').bold);
                 }
                 expect(grunt.verbose.writeln).toHaveBeenCalledWith('Cloning repository [repo.git] to working directory [' + configuration.wd + ']');
+                expect(grunt.verbose.writeln).toHaveBeenCalledWith('Cleaning content of [' + configuration.wd + ']');
                 expect(grunt.verbose.writeln).toHaveBeenCalledWith('Copying files to working directory [' + configuration.wd + ']');
                 expect(grunt.verbose.writeln).toHaveBeenCalledWith('Updating bower.json with new version [' + newVersion + ']');
                 expect(grunt.verbose.writeln).toHaveBeenCalledWith('Adding all files');
@@ -93,6 +95,8 @@ describe('ReleaseMe', function () {
         }
 
         it('when a single file block has been provided in the configuration', function () {
+            fs.mkdirsSync('.tmp/filesObject');  // have to make sure `wd` exists
+
             releaseMe({
                 repository: 'repo.git',
                 buildNumber: '1',
@@ -107,6 +111,8 @@ describe('ReleaseMe', function () {
         });
 
         it('when a single file block and no working directory have been provided in the configuration', function () {
+            fs.mkdirsSync('.release');  // have to make sure `wd` exists
+
             releaseMe({
                 repository: 'repo.git',
                 buildNumber: '1',
@@ -120,6 +126,8 @@ describe('ReleaseMe', function () {
         });
 
         it('when multiple file blocks have been provided in the configuration', function () {
+            fs.mkdirsSync('.tmp/filesObjectArray');  // have to make sure `wd` exists
+
             releaseMe({
                 repository: 'repo.git',
                 buildNumber: '1',
@@ -141,6 +149,8 @@ describe('ReleaseMe', function () {
         });
 
         it('when multiple file blocks and no working directory have been provided in the configuration', function () {
+            fs.mkdirsSync('.release');  // have to make sure `wd` exists
+
             releaseMe({
                 repository: 'repo.git',
                 buildNumber: '1',
@@ -161,6 +171,8 @@ describe('ReleaseMe', function () {
         });
 
         it('when no build number has been provided in the configuration', function () {
+            fs.mkdirsSync('.tmp/filesObject');  // have to make sure `wd` exists
+
             releaseMe({
                 repository: 'repo.git',
                 main: './some_repo_code.js',
@@ -174,12 +186,18 @@ describe('ReleaseMe', function () {
         });
 
         it('when an empty string has been provided as build number in the configuration', function () {
+            var bower = fs.readJSONSync('source_repo/bower.json');
+            bower.version = bower.version + '-build.1+sha.6283298';
+
+            fs.mkdirsSync('.tmp/noChanges');
+            fs.writeJSONSync('.tmp/noChanges/bower.json', bower);
+
             releaseMe({
                 repository: 'repo.git',
                 buildNumber: '',
                 main: './some_repo_code.js',
                 cwd: './source_repo',
-                wd: '.tmp/filesObject',
+                wd: '.tmp/noChanges',
                 files: {
                     cwd: './source_repo/packaged',
                     src: '**/*.js'
@@ -188,6 +206,8 @@ describe('ReleaseMe', function () {
         });
 
         it('when an array of main files has been provided in the configuration', function () {
+            fs.mkdirsSync('.tmp/mainArray');  // have to make sure `wd` exists
+
             releaseMe({
                 repository: 'repo.git',
                 main: ['./some_repo_code.js', './some_repo_code.min.js'],
@@ -202,6 +222,8 @@ describe('ReleaseMe', function () {
 
         it('when there is no .bower.json in the cwd', function () {
             mockGitFiles();
+            fs.mkdirsSync('.tmp/dotGitSha');  // have to make sure `wd` exists
+
             releaseMe({
                 repository: 'repo.git',
                 buildNumber: '1',
@@ -213,6 +235,26 @@ describe('ReleaseMe', function () {
                     src: '**/*.js'
                 }
             });
+        });
+
+        it('when a file is removed from the source repository', function() {
+            fs.mkdirsSync('.tmp/fileRemoved');
+            fs.writeJSONSync('.tmp/fileRemoved/test.json', {foo: 'bar'});
+
+            expect(grunt.file.exists('.tmp/fileRemoved/test.json')).toBeTruthy();
+            releaseMe({
+                repository: 'repo.git',
+                buildNumber: '',
+                main: './some_repo_code.js',
+                cwd: './source_repo',
+                wd: '.tmp/fileRemoved',
+                files: {
+                    cwd: './source_repo/packaged',
+                    src: '**/*.js'
+                }
+            });
+
+            expect(grunt.file.exists('.tmp/fileRemoved/test.json')).toBeFalsy();
         });
     });
 
